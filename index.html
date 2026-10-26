@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechZone · Test A/B</title>
+<style>
+:root{--azul:#1d4ed8;--azul-osc:#1e3a8a;--azul-cl:#dbeafe;--azul-sup:#eff6ff;--txt:#0f172a;--gris:#64748b;--gris-cl:#f1f5f9;--borde:#e2e8f0}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+body{font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;color:var(--txt);background:var(--gris-cl);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input{font:inherit}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+/* Cabecera */
+header{background:#fff;border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:20}
+.top{display:flex;align-items:center;gap:16px;padding:14px 0;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.6rem;font-weight:800;letter-spacing:-.03em;color:var(--azul-osc);background:none;border:0;cursor:pointer}
+.logo i{width:34px;height:34px;border-radius:10px;background:var(--azul);display:grid;place-items:center}
+.logo span{color:var(--azul)}
+.buscar{flex:1;min-width:200px;position:relative}
+.buscar input{width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--borde);border-radius:999px;background:var(--gris-cl);font-size:1rem}
+.buscar input:focus{border-color:var(--azul);background:#fff;outline:none;box-shadow:0 0 0 4px var(--azul-cl)}
+.buscar svg{position:absolute;left:15px;top:50%;transform:translateY(-50%)}
+.carrito{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1.5px solid var(--borde);background:#fff;font-weight:600;cursor:pointer;color:var(--azul-osc)}
+.carrito:hover{border-color:var(--azul)}
+.carrito b{background:var(--azul);color:#fff;min-width:24px;height:24px;border-radius:999px;display:grid;place-items:center;font-size:.8rem;padding:0 6px}
+.carrito.pop b{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.4)}}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:thin}
+nav button{white-space:nowrap;padding:8px 16px;border-radius:999px;border:0;background:transparent;color:var(--gris);font-weight:600;cursor:pointer}
+nav button:hover{background:var(--azul-sup);color:var(--azul)}
+nav button[aria-pressed=true]{background:var(--azul);color:#fff}
+/* Barra de versión */
+.estado{background:var(--azul-osc);color:#fff}
+.estado .wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
+.estado button{background:#fff;color:var(--azul-osc);border:0;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700}
+.estado button:hover{background:var(--azul-cl)}
+/* Botones generales */
+.prim{padding:15px 30px;border-radius:12px;border:0;background:var(--azul);color:#fff;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 6px 18px rgba(29,78,216,.3)}
+.prim:hover{background:var(--azul-osc)}
+.sec{padding:10px 16px;border-radius:8px;border:1.5px solid var(--borde);background:#fff;font-weight:600;cursor:pointer;color:var(--txt)}
+.sec:hover{border-color:var(--azul);color:var(--azul)}
+.volver{background:none;border:0;color:var(--azul);font-weight:600;cursor:pointer;padding:6px 0;margin:20px 0 0}
+.volver:hover{text-decoration:underline}
+/* Pantalla de inicio */
+.portada{min-height:calc(100vh - 66px);display:grid;place-items:center;padding:32px 20px;background:linear-gradient(130deg,var(--azul-osc),var(--azul))}
+.portada div{max-width:640px;text-align:center;color:#fff;display:grid;gap:18px;justify-items:center}
+.portada h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.08;letter-spacing:-.03em}
+.portada p{color:#dbeafe;font-size:1.1rem;max-width:52ch}
+.portada .prim{background:#fff;color:var(--azul-osc);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.portada .prim:hover{background:var(--azul-cl)}
+.portada small{color:#bfdbfe}
+/* Paneles y menú */
+.panel{background:#fff;border:1px solid var(--borde);border-radius:16px;padding:28px;margin:20px 0}
+.panel h1,.panel h2{font-size:1.6rem;letter-spacing:-.02em;margin-bottom:8px}
+.panel>p{color:var(--gris);max-width:70ch}
+.grupos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.grupo{border:1.5px solid var(--borde);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--gris-cl)}
+.grupo h3{font-size:1.15rem}
+.grupo{align-items:flex-start;gap:16px}
+.entrar{align-self:flex-start;padding:12px 22px;border-radius:10px;border:0;background:var(--azul);color:#fff;font-weight:700;cursor:pointer}
+.entrar:hover{background:var(--azul-osc)}
+.muestra{display:flex;align-items:center;gap:10px;color:var(--gris);font-size:.85rem}
+.analizar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--azul-sup);border-color:var(--azul-cl)}
+.analizar h2{font-size:1.2rem;margin:0}
+.analizar p{color:var(--gris);font-size:.95rem}
+/* Productos */
+.cab-sec{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 14px;flex-wrap:wrap;gap:8px}
+.cab-sec h2{font-size:1.5rem;letter-spacing:-.02em}
+.cab-sec span{color:var(--gris);font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:18px;padding-bottom:20px}
+.tarj{background:#fff;border:1px solid var(--borde);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.imgb{border:0;padding:0;cursor:pointer;display:block;width:100%;aspect-ratio:4/3;background:linear-gradient(160deg,var(--azul-sup),#e2e8f0);display:grid;place-items:center}
+.imgb svg{width:78%;height:auto}
+.tarj:hover .imgb svg{transform:scale(1.04)}
+.imgb svg{transition:transform .2s}
+.cuerpo{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.cat{color:var(--azul);font-size:.82rem;font-weight:600}
+.tit{background:none;border:0;padding:0;text-align:left;font-size:1.05rem;font-weight:700;line-height:1.3;cursor:pointer;color:var(--txt)}
+.tit:hover{color:var(--azul)}
+.desc{color:var(--gris);font-size:.9rem;flex:1}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;min-height:46px}
+.precio{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+.vacio{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--gris);background:#fff;border:1px dashed var(--borde);border-radius:16px}
+/* Botones de compra: ÚNICA diferencia entre versiones */
+.compraA{background:var(--azul);color:#fff;border:0;border-radius:6px;padding:11px 18px;font-weight:700;cursor:pointer;transition:background .15s}
+.compraA:hover{background:var(--azul-osc)}
+.compraB{background:var(--azul);color:#fff;border:0;border-radius:50%;width:46px;height:46px;display:grid;place-items:center;cursor:pointer;transition:background .15s;padding:0}
+.compraB:hover{background:var(--azul-osc)}
+/* Ventanas (detalle y cesta) */
+dialog{border:0;border-radius:18px;padding:0;width:min(720px,calc(100% - 24px));max-height:calc(100vh - 24px);box-shadow:0 20px 60px rgba(15,23,42,.35);color:var(--txt)}
+dialog::backdrop{background:rgba(15,23,42,.55)}
+.dlg{display:grid;grid-template-columns:1fr 1fr}
+.dlg .gi{background:linear-gradient(160deg,var(--azul-sup),#e2e8f0);display:grid;place-items:center;padding:24px}
+.dlg .gi svg{width:100%}
+.dlg .gd{padding:26px;display:flex;flex-direction:column;gap:10px}
+.dlg h2{font-size:1.4rem;line-height:1.2;letter-spacing:-.02em}
+.dlg ul{padding-left:20px;color:var(--gris);font-size:.95rem}
+.cerrar{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;font-size:1.3rem;line-height:1;color:var(--txt)}
+.cesta{padding:26px}
+.cesta h2{font-size:1.4rem;margin-bottom:12px}
+.lin{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)}
+.lin .mini{background:var(--azul-sup);border-radius:8px;padding:4px}
+.lin small{color:var(--gris);display:block}
+.lin button{background:none;border:0;color:var(--azul);cursor:pointer;font-weight:600}
+.tot{display:flex;justify-content:space-between;font-size:1.2rem;font-weight:800;margin:16px 0 4px}
+/* Resultados */
+.aviso{display:inline-block;background:#fef3c7;color:#78350f;border:1px solid #fcd34d;padding:6px 12px;border-radius:8px;font-size:.88rem;font-weight:600;margin:4px 0 16px}
+table{width:100%;border-collapse:collapse;margin-top:8px;min-width:480px}
+th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--borde)}
+th{color:var(--gris);font-size:.88rem;font-weight:600}
+td.n{font-variant-numeric:tabular-nums;font-weight:700}
+.scroll{overflow-x:auto}
+.barras{display:grid;gap:14px;margin:22px 0}
+.barra{display:grid;grid-template-columns:90px 1fr 64px;align-items:center;gap:12px}
+.barra div{height:26px;background:var(--gris-cl);border-radius:6px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--azul);border-radius:6px;transition:width .5s}
+.barra.b i{background:#60a5fa}
+.barra b{text-align:right;font-variant-numeric:tabular-nums}
+.concl{background:var(--azul-sup);border-left:5px solid var(--azul);padding:16px 18px;border-radius:8px}
+.concl strong{display:block;margin-bottom:2px;color:var(--azul-osc)}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.nota{color:var(--gris);font-size:.85rem;margin-top:14px}
+footer{background:var(--azul-osc);color:#bfdbfe;padding:24px 0;font-size:.9rem}
+/* Aviso emergente */
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140px);background:var(--txt);color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:2000;max-width:calc(100% - 32px);transition:transform .3s;display:flex;gap:10px;align-items:center}
+#toast.on{transform:translate(-50%,0)}
+#toast svg{flex:none}
+@media(max-width:620px){.dlg{grid-template-columns:1fr}.panel{padding:20px}.barra{grid-template-columns:70px 1fr 56px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <button class="logo" id="logo" aria-label="TechZone, ir a la pantalla de inicio"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></i>Tech<span>Zone</span></button>
+      <div class="buscar" id="busq" hidden>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscar productos por nombre…" aria-label="Buscar productos por nombre" autocomplete="off">
+      </div>
+      <button class="carrito" id="carrito" aria-label="Abrir la cesta" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20.5 8H6"/></svg>Cesta <b id="cnt">0</b></button>
+    </div>
+    <nav id="cats" aria-label="Categorías" hidden></nav>
+  </div>
+</header>
+
+<!-- Pantalla 1: inicio -->
+<section id="s-inicio" class="portada">
+  <div>
+    <h1>Bienvenido al experimento de TechZone</h1>
+    <p>Un experimento educativo de Test A/B en una tienda de tecnología ficticia. Elige un grupo, explora la tienda y después analiza los resultados.</p>
+    <button class="prim" id="comenzar">Comenzar Test A/B</button>
+    <small>Simulación educativa · sin compras reales ni datos personales</small>
+  </div>
+</section>
+
+<!-- Pantalla 2: menú principal -->
+<main id="s-menu" class="wrap" hidden>
+  <section class="panel" aria-labelledby="tMenu">
+    <h1 id="tMenu">Experimento Test A/B</h1>
+    <p>Elige un grupo para entrar en su versión de la tienda. Explora los productos y compra con total normalidad: no hay respuestas correctas ni incorrectas.</p>
+    <div class="grupos">
+      <div class="grupo"><h3>Grupo A</h3><button class="entrar" data-entrar="A">Entrar como grupo A</button></div>
+      <div class="grupo"><h3>Grupo B</h3><button class="entrar" data-entrar="B">Entrar como grupo B</button></div>
+    </div>
+  </section>
+  <section class="panel analizar">
+    <div><h2>Analizar resultados del test</h2><p id="resumen"></p></div>
+    <button class="sec" id="irRes">Analizar resultados del test</button>
+  </section>
+  <button class="volver" id="aInicio">← Volver a la pantalla de inicio</button>
+</main>
+
+<!-- Pantalla 3: tienda -->
+<div id="s-tienda" hidden>
+  <div class="estado">
+    <div class="wrap">
+      <p id="estadoTxt"></p>
+      <button id="aMenu">← Volver al menú de grupos</button>
+    </div>
+  </div>
+  <main class="wrap">
+    <div class="cab-sec"><h2 id="tProd">Productos destacados</h2><span id="numProd"></span></div>
+    <section class="grid" id="grid" aria-live="polite"></section>
+  </main>
+</div>
+
+<!-- Pantalla 4: resultados -->
+<main id="s-res" class="wrap" hidden>
+  <button class="volver" id="aMenu2">← Volver al menú de grupos</button>
+  <section class="panel" aria-labelledby="tRes" style="margin-top:12px">
+    <h1 id="tRes">Resultados del Test A/B</h1>
+    <span class="aviso">Simulación educativa: estos datos no proceden de un experimento real.</span>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Versión</th><th>Visitas</th><th>Clics en comprar</th><th>Tasa de clics</th></tr></thead>
+      <tbody>
+        <tr><td>A · Botón rectangular «Comprar ahora»</td><td class="n" id="vA"></td><td class="n" id="cA"></td><td class="n" id="pA"></td></tr>
+        <tr><td>B · Botón circular con carrito</td><td class="n" id="vB"></td><td class="n" id="cB"></td><td class="n" id="pB"></td></tr>
+      </tbody>
+    </table></div>
+    <div class="barras" aria-label="Comparación visual de la tasa de clics">
+      <div class="barra"><span>Versión A</span><div><i id="bA"></i></div><b id="tA"></b></div>
+      <div class="barra b"><span>Versión B</span><div><i id="bB"></i></div><b id="tB"></b></div>
+    </div>
+    <div class="concl" id="concl" role="status"></div>
+    <div class="acciones">
+      <button class="sec" id="sim">Añadir 50 visitas simuladas a cada grupo</button>
+      <button class="sec" id="reset">Reiniciar resultados</button>
+    </div>
+    <p class="nota">Cada entrada en una tienda cuenta como una visita y cada pulsación en un botón de compra como un clic. La tasa de clics es clics ÷ visitas; si se pulsa varias veces puede superar el 100 %.</p>
+  </section>
+</main>
+
+<footer><div class="wrap">TechZone es una tienda ficticia creada con fines educativos. No se realizan compras reales ni se solicitan datos personales.</div></footer>
+
+<dialog id="det" aria-labelledby="dN"><button class="cerrar" data-cerrar aria-label="Cerrar detalle">×</button><div class="dlg" id="detC"></div></dialog>
+<dialog id="ces" aria-labelledby="cT"><button class="cerrar" data-cerrar aria-label="Cerrar cesta">×</button><div class="cesta" id="cesC"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var CATS=['Auriculares','Altavoces','Pantallas y monitores','Teclados y ratones','Accesorios'];
+  var P=[
+    {id:1,n:'Auriculares inalámbricos Nova ANC',c:0,p:129.9,d:'Cancelación activa de ruido y 40 h de batería.',s:['Bluetooth 5.3 con cancelación activa de ruido','Hasta 40 horas de autonomía','Almohadillas de espuma viscoelástica y micrófono integrado'],i:'head'},
+    {id:2,n:'Auriculares Pulse Buds',c:0,p:59.9,d:'Intrauditivos Bluetooth con estuche de carga.',s:['Intrauditivos con 8 h de música por carga','Estuche de carga con 24 h adicionales','Resistentes al sudor y al agua (IPX4)'],i:'buds'},
+    {id:3,n:'Altavoz Bluetooth Boom Mini',c:1,p:49.95,d:'Sonido 360°, resistente al agua y 12 h de música.',s:['Sonido envolvente de 360°','Resistente al agua y al polvo (IP67)','12 horas de reproducción continua'],i:'spk'},
+    {id:4,n:'Monitor Ultra 27" 4K',c:2,p:329,d:'Panel IPS de 27 pulgadas, 60 Hz y HDR.',s:['Resolución 4K (3840 × 2160) con panel IPS','Compatible con HDR y 99 % sRGB','Entradas HDMI, DisplayPort y USB-C'],i:'mon'},
+    {id:5,n:'Teclado mecánico Forge RGB',c:3,p:89.9,d:'Interruptores táctiles y retroiluminación RGB.',s:['Interruptores mecánicos táctiles','Retroiluminación RGB personalizable','Distribución en español con teclado numérico'],i:'key'},
+    {id:6,n:'Ratón inalámbrico Glide Pro',c:3,p:34.9,d:'Ergonómico, 2,4 GHz y hasta 6 meses de batería.',s:['Conexión inalámbrica de 2,4 GHz','Sensor de hasta 4.000 DPI','Hasta 6 meses con una sola pila'],i:'mouse'},
+    {id:7,n:'Hub USB-C 7 en 1',c:4,p:44.5,d:'HDMI 4K, lector de tarjetas y 3 puertos USB.',s:['Salida HDMI 4K a 30 Hz','3 puertos USB-A y lector SD/microSD','Carcasa de aluminio compacta'],i:'hub'},
+    {id:8,n:'Batería externa Volt 20.000 mAh',c:4,p:39.9,d:'Carga rápida de 65 W para móvil y portátil.',s:['Capacidad de 20.000 mAh','Carga rápida USB-C de 65 W','Indicador digital del nivel de carga'],i:'bank'}
+  ];
+  var S='#1e293b',B1='#1d4ed8',B2='#3b82f6',B3='#93c5fd',G='#cbd5e1';
+  function img(t){
+    var s='<svg viewBox="0 0 200 150" role="img" aria-hidden="true">';
+    if(t=='head')s+='<path d="M42 86a58 58 0 0 1 116 0" fill="none" stroke="'+S+'" stroke-width="9" stroke-linecap="round"/><rect x="32" y="82" width="28" height="46" rx="13" fill="'+B1+'"/><rect x="140" y="82" width="28" height="46" rx="13" fill="'+B1+'"/><rect x="38" y="92" width="8" height="26" rx="4" fill="'+B3+'"/><rect x="154" y="92" width="8" height="26" rx="4" fill="'+B3+'"/>';
+    if(t=='buds')s+='<rect x="52" y="82" width="96" height="48" rx="22" fill="'+S+'"/><path d="M52 104h96" stroke="'+G+'" stroke-width="2"/><circle cx="100" cy="104" r="5" fill="'+B2+'"/><g fill="'+B1+'"><circle cx="70" cy="40" r="15"/><circle cx="130" cy="40" r="15"/></g><g fill="'+S+'"><rect x="64" y="46" width="8" height="26" rx="4"/><rect x="128" y="46" width="8" height="26" rx="4"/></g>';
+    if(t=='spk')s+='<rect x="30" y="52" width="140" height="62" rx="31" fill="'+S+'"/><rect x="44" y="64" width="112" height="38" rx="19" fill="'+B1+'"/><g fill="'+B3+'"><circle cx="70" cy="83" r="3"/><circle cx="86" cy="83" r="3"/><circle cx="102" cy="83" r="3"/><circle cx="118" cy="83" r="3"/><circle cx="134" cy="83" r="3"/></g><path d="M80 52v-10h40v10" fill="none" stroke="'+S+'" stroke-width="6" stroke-linecap="round"/>';
+    if(t=='mon')s+='<rect x="24" y="20" width="152" height="94" rx="8" fill="'+S+'"/><rect x="31" y="27" width="138" height="80" rx="3" fill="'+B1+'"/><path d="M31 90 70 62l28 22 24-18 47 34v7H31z" fill="'+B2+'"/><circle cx="140" cy="48" r="9" fill="'+B3+'"/><rect x="92" y="114" width="16" height="16" fill="'+G+'"/><rect x="66" y="130" width="68" height="8" rx="4" fill="'+S+'"/>';
+    if(t=='key'){s+='<rect x="14" y="42" width="172" height="76" rx="10" fill="'+S+'"/>';for(var r=0;r<4;r++)for(var k=0;k<11;k++){if(r==3&&(k<2||k>8))continue;s+='<rect x="'+(22+k*15.2)+'" y="'+(50+r*16)+'" width="12" height="12" rx="2.5" fill="'+(r==3?B2:(k%4==0?B1:G))+'"/>';}s+='<rect x="52" y="98" width="96" height="12" rx="2.5" fill="'+B3+'"/>';}
+    if(t=='mouse')s+='<path d="M100 18c-28 0-44 22-44 52v34c0 22 18 36 44 36s44-14 44-36V70c0-30-16-52-44-52z" fill="'+S+'"/><path d="M100 18v52M56 70h88" stroke="'+G+'" stroke-width="2.5" fill="none"/><rect x="94" y="36" width="12" height="22" rx="6" fill="'+B2+'"/>';
+    if(t=='hub'){s+='<rect x="30" y="54" width="140" height="44" rx="12" fill="'+B1+'"/><rect x="30" y="54" width="140" height="14" rx="7" fill="'+B2+'"/>';for(var h=0;h<5;h++)s+='<rect x="'+(44+h*24)+'" y="76" width="16" height="9" rx="2" fill="'+S+'"/>';s+='<path d="M30 76H10M170 76h20" stroke="'+S+'" stroke-width="7" stroke-linecap="round"/>';}
+    if(t=='bank')s+='<rect x="58" y="16" width="84" height="118" rx="16" fill="'+S+'"/><rect x="68" y="28" width="64" height="70" rx="8" fill="'+B1+'"/><path d="m106 38-18 30h14l-4 20 18-30h-14z" fill="#fff"/><g fill="'+B3+'"><circle cx="78" cy="116" r="4"/><circle cx="92" cy="116" r="4"/><circle cx="106" cy="116" r="4"/><circle cx="120" cy="116" r="4" opacity=".4"/></g>';
+    return s+'</svg>';
+  }
+  var CART='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20.5 8H6"/></svg>';
+  var eur=function(x){return x.toLocaleString('es-ES',{style:'currency',currency:'EUR'})};
+  var $=function(id){return document.getElementById(id)};
+  var byId=function(id){return P.filter(function(p){return p.id==id})[0]};
+
+  var D={vA:0,vB:0,cA:0,cB:0};
+  try{var g=JSON.parse(localStorage.getItem('techzone-ab'));if(g&&typeof g.vA=='number')D=g}catch(e){}
+  function guardar(){try{localStorage.setItem('techzone-ab',JSON.stringify(D))}catch(e){}}
+  var grupo='A',cat=-1,texto='',cesta={},tt;
+
+  /* ---------- Pantallas ---------- */
+  function pantalla(n){
+    ['inicio','menu','tienda','res'].forEach(function(x){$('s-'+x).hidden=x!=n});
+    var t=n=='tienda';
+    $('busq').hidden=$('carrito').hidden=$('cats').hidden=!t;
+    if(n=='menu')pintarResumen();
+    if(n=='res')pintarResultados();
+    window.scrollTo(0,0);
+  }
+  function entrar(v){
+    grupo=v;D['v'+v]++;guardar();cat=-1;texto='';$('q').value='';
+    $('estadoTxt').textContent='Estás en la tienda del grupo '+v+' del Test A/B (simulación educativa).';
+    pintarCats();pintarProductos();pantalla('tienda');
+  }
+
+  /* ---------- Tienda ---------- */
+  function boton(p,clase){
+    return grupo=='A'?'<button class="compraA" data-buy="'+p.id+'">Comprar ahora</button>'
+      :'<button class="compraB" data-buy="'+p.id+'" aria-label="Comprar '+p.n+'">'+CART+'</button>';
+  }
+  function pintarCats(){
+    var h='<button data-c="-1" aria-pressed="'+(cat==-1)+'">Todos</button>';
+    CATS.forEach(function(c,i){h+='<button data-c="'+i+'" aria-pressed="'+(cat==i)+'">'+c+'</button>'});
+    $('cats').innerHTML=h;
+  }
+  function pintarProductos(){
+    var t=texto.trim().toLowerCase();
+    var l=P.filter(function(p){return (cat<0||p.c==cat)&&(!t||p.n.toLowerCase().indexOf(t)>-1)});
+    var h='';
+    l.forEach(function(p){
+      h+='<article class="tarj"><button class="imgb" data-det="'+p.id+'" aria-label="Ver detalles de '+p.n+'">'+img(p.i)+'</button><div class="cuerpo"><span class="cat">'+CATS[p.c]+'</span><button class="tit" data-det="'+p.id+'">'+p.n+'</button><p class="desc">'+p.d+'</p><div class="fila"><span class="precio">'+eur(p.p)+'</span>'+boton(p)+'</div></div></article>';
+    });
+    $('grid').innerHTML=h||'<div class="vacio"><strong>No hay productos que coincidan.</strong><br>Prueba con otra palabra o elige otra categoría.</div>';
+    $('numProd').textContent=l.length+(l.length==1?' producto':' productos');
+    $('tProd').textContent=cat<0?'Productos destacados':CATS[cat];
+  }
+  function detalle(id){
+    var p=byId(id),h='<div class="gi">'+img(p.i)+'</div><div class="gd"><span class="cat">'+CATS[p.c]+'</span><h2 id="dN">'+p.n+'</h2><p class="desc" style="flex:none">'+p.d+'</p><ul>';
+    p.s.forEach(function(x){h+='<li>'+x+'</li>'});
+    h+='</ul><div class="fila" style="margin-top:auto"><span class="precio">'+eur(p.p)+'</span>'+boton(p)+'</div></div>';
+    $('detC').innerHTML=h;$('det').showModal();
+  }
+
+  /* ---------- Cesta ---------- */
+  function total(){var n=0;for(var k in cesta)n+=cesta[k];return n}
+  function pintarCesta(){
+    var h='<h2 id="cT">Tu cesta</h2>',sum=0,vacia=true;
+    for(var k in cesta){vacia=false;var p=byId(k),q=cesta[k];sum+=p.p*q;
+      h+='<div class="lin"><div class="mini">'+img(p.i)+'</div><div><strong>'+p.n+'</strong><small>'+q+' × '+eur(p.p)+'</small></div><button data-quitar="'+k+'">Quitar</button></div>'}
+    if(vacia)h+='<p style="color:var(--gris)">Todavía no has añadido productos.</p>';
+    else h+='<div class="tot"><span>Total</span><span>'+eur(sum)+'</span></div><p class="nota" style="margin:0 0 12px">Compra simulada: no se realiza ningún pago.</p><button class="sec" data-vaciar>Vaciar cesta</button>';
+    $('cesC').innerHTML=h;$('cnt').textContent=total();
+  }
+
+  /* ---------- Resultados ---------- */
+  var pct=function(c,v){return v?c/v*100:0};
+  var fmt=function(x){return x.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' %'};
+  var pts=function(x){return x.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+' puntos'};
+  function pintarResumen(){$('resumen').textContent='Visitas totales: '+(D.vA+D.vB)+' · Clics en comprar: '+(D.cA+D.cB)+'. Los datos se actualizan con cada interacción.'}
+  function pintarResultados(){
+    var pa=pct(D.cA,D.vA),pb=pct(D.cB,D.vB);
+    $('vA').textContent=D.vA;$('vB').textContent=D.vB;$('cA').textContent=D.cA;$('cB').textContent=D.cB;
+    $('pA').textContent=$('tA').textContent=fmt(pa);$('pB').textContent=$('tB').textContent=fmt(pb);
+    var m=Math.max(pa,pb,1);
+    $('bA').style.width=Math.min(100,pa/m*100)+'%';$('bB').style.width=Math.min(100,pb/m*100)+'%';
+    var MIN=30,t,c;
+    if(D.vA<MIN||D.vB<MIN){
+      t='Todavía no hay suficientes datos';
+      c='Cada versión necesita al menos '+MIN+' visitas para dar una conclusión orientativa (ahora: A '+D.vA+', B '+D.vB+'). Entra varias veces en cada grupo, pulsa botones de compra o añade visitas simuladas.';
+    }else{
+      var dif=pa-pb;
+      if(Math.abs(dif)<2){t='No hay una diferencia clara';c='Los dos botones consiguen resultados muy parecidos (diferencia de '+pts(Math.abs(dif))+'). Con estos datos no se puede elegir un diseño ganador.'}
+      else{var w=dif>0?'A':'B';t='La versión '+w+' funciona mejor';c=(w=='A'?'El botón rectangular «Comprar ahora»':'El botón circular con carrito')+' logra '+pts(Math.abs(dif))+' más de tasa de clics. Es una simulación educativa: en un experimento real habría que comprobar la significación estadística.'}
+    }
+    $('concl').innerHTML='<strong>'+t+'</strong>'+c;
+  }
+
+  /* ---------- Avisos ---------- */
+  function aviso(msg){
+    var t=$('toast');
+    t.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>'+msg+'</span>';
+    t.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('on')},2800);
+  }
+
+  /* ---------- Eventos ---------- */
+  document.addEventListener('click',function(e){
+    if(e.target.tagName=='DIALOG')return e.target.close();
+    var b=e.target.closest('button');if(!b)return;
+    var d=b.dataset;
+    if(d.cerrar!==undefined)return b.closest('dialog').close();
+    if(d.entrar)return entrar(d.entrar);
+    if(d.det)return detalle(d.det);
+    if(d.buy){
+      var p=byId(d.buy);
+      D['c'+grupo]++;guardar();cesta[p.id]=(cesta[p.id]||0)+1;pintarCesta();
+      var k=$('carrito');k.classList.remove('pop');void k.offsetWidth;k.classList.add('pop');
+      return aviso('«'+p.n+'» añadido a la cesta (compra simulada, sin ningún cargo).');
+    }
+    if(d.quitar){delete cesta[d.quitar];return pintarCesta()}
+    if(d.vaciar!==undefined){cesta={};return pintarCesta()}
+    if(d.c!==undefined){cat=+d.c;pintarCats();return pintarProductos()}
+  });
+  $('q').addEventListener('input',function(){texto=this.value;pintarProductos()});
+  $('comenzar').onclick=function(){pantalla('menu')};
+  $('logo').onclick=$('aInicio').onclick=function(){pantalla('inicio')};
+  $('aMenu').onclick=$('aMenu2').onclick=function(){pantalla('menu')};
+  $('irRes').onclick=function(){pantalla('res')};
+  $('carrito').onclick=function(){pintarCesta();$('ces').showModal()};
+  $('reset').onclick=function(){D={vA:0,vB:0,cA:0,cB:0};guardar();pintarResultados();aviso('Resultados reiniciados.')};
+  $('sim').onclick=function(){
+    ['A','B'].forEach(function(x){var pr=.06+Math.random()*.10;for(var i=0;i<50;i++){D['v'+x]++;if(Math.random()<pr)D['c'+x]++}});
+    guardar();pintarResultados();aviso('Se han añadido 50 visitas simuladas a cada grupo.');
+  };
+  pintarCesta();pantalla('inicio');
+})();
+</script>
+</body>
+</html>
